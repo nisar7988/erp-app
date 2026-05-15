@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: #E66C19;
+    --primary-variant: #FF8A3D;
+    --surface: #FFFBF9;
+    --surface-dim: #F7F2F0;
+    --on-surface: #1C1917;
+    --on-surface-variant: #78716C;
+    --outline: #E7E5E4;
+    --success: #16A34A;
+    --error: #DC2626;
+  }
+}

@@ -3,4 +3,9 @@ const { withNativeWind } = require("nativewind/metro");
 
 const config = getDefaultConfig(__dirname);
 
-module.exports = withNativeWind(config, { input: "./src/global.css" });
+// Force the watcher to be more stable
+config.watcher.additionalWatchRootConfigs = [];
+
+module.exports = withNativeWind(config, {
+  input: "./src/global.css",
+});
