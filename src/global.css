@@ -4,14 +4,16 @@
 
 @layer base {
   :root {
-    --primary: #E66C19;
-    --primary-variant: #FF8A3D;
-    --surface: #FFFBF9;
-    --surface-dim: #F7F2F0;
-    --on-surface: #1C1917;
-    --on-surface-variant: #78716C;
-    --outline: #E7E5E4;
-    --success: #16A34A;
-    --error: #DC2626;
+    --primary: 230 108 25;
+    --primary-variant: 255 138 61;
+    --primary-container: 254 229 217;
+    --surface: 255 251 249;
+    --surface-dim: 247 242 240;
+    --surface-variant: 255 247 243;
+    --on-surface: 28 25 23;
+    --on-surface-variant: 120 113 108;
+    --outline: 231 229 228;
+    --success: 22 163 74;
+    --error: 220 38 38;
   }
 }
