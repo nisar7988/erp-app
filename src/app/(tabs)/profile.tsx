@@ -5,6 +5,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { ConfirmationModal } from "../../components/common/ConfirmationModal";
 import { authService } from "../../services/authService";
+import { useProfile } from "../../hooks/useStudentData";
+import GlobalLoaderOverlay from "../../components/common/GlobalLoaderOverlay";
 
 /**
  * Premium Profile Screen
@@ -16,11 +18,23 @@ import { authService } from "../../services/authService";
  */
 export default function ProfileScreen() {
   const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
+  const { data: profile, isLoading } = useProfile();
 
   const handleLogout = async () => {
     setLogoutModalVisible(false);
     await authService.logout();
     router.replace("/(auth)");
+  };
+
+  if (isLoading) {
+    return <GlobalLoaderOverlay text="Loading Profile..." />;
+  }
+
+  const user = {
+    name: profile?.firstName ? `${profile.firstName} ${profile.lastName}` : "Student",
+    id: profile?.studentProfile?.admissionNo || profile?.id?.slice(0, 8) || "N/A",
+    major: profile?.studentProfile?.enrollments?.[0]?.class?.name || "N/A",
+    avatar: profile?.profileImage || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSeJTiV7AMRW_xObVhIqXKza_MetiafhuqwnA&s",
   };
 
   return (
@@ -41,9 +55,7 @@ export default function ProfileScreen() {
         <View className="items-center mt-8">
           <View className="relative">
             <Image
-              source={{
-                uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSeJTiV7AMRW_xObVhIqXKza_MetiafhuqwnA&s",
-              }}
+              source={{ uri: user.avatar }}
               className="w-32 h-32 rounded-full bg-outline border-4 border-surface shadow-lg shadow-black/10"
             />
             <TouchableOpacity className="absolute bottom-0 right-0 bg-primary p-2 rounded-full border-2 border-surface">
@@ -52,16 +64,16 @@ export default function ProfileScreen() {
           </View>
 
           <View className="items-center mt-6">
-            <Text className="text-2xl font-bold text-on-surface">Alex Johnson</Text>
-            <Text className="text-on-surface-variant font-medium mt-1">ID: 882941</Text>
-            <Text className="text-on-surface-variant mt-0.5">Senior Product Designer</Text>
+            <Text className="text-2xl font-bold text-on-surface">{user.name}</Text>
+            <Text className="text-on-surface-variant font-medium mt-1">ID: {user.id}</Text>
+            <Text className="text-on-surface-variant mt-0.5">{user.major}</Text>
           </View>
         </View>
 
         <View className="mt-10">
           <Text className="text-[10px] font-bold text-on-surface-variant tracking-widest mb-4 uppercase">Account Settings</Text>
           <View className="bg-surface border border-outline rounded-[32px] overflow-hidden">
-            <MenuItem icon="person-outline" label="Personal Info" onPress={() => {}} />
+            <MenuItem icon="person-outline" label="Personal Info" onPress={() => router.push("/personal-info")} />
             <MenuItem icon="notifications-outline" label="Notifications" onPress={() => {}} />
             <MenuItem icon="shield-checkmark-outline" label="Security" onPress={() => {}} isLast />
           </View>
