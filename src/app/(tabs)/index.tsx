@@ -17,9 +17,20 @@ export default function HomeScreen() {
     attendanceSummary,
     financeSummary,
     schedule,
+    isLoading,
     navigateToAttendance,
     navigateToCalendar,
   } = useDashboard();
+
+  if (isLoading) {
+    return (
+      <ScreenWrapper>
+        <View className="flex-1 items-center justify-center">
+          <Text className="text-on-surface">Loading Dashboard...</Text>
+        </View>
+      </ScreenWrapper>
+    );
+  }
 
   return (
     <ScreenWrapper>

@@ -1,24 +1,36 @@
-import React, { useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import React, { useState, useMemo } from "react";
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ScreenWrapper } from "../../components/layout/ScreenWrapper";
 import { Card } from "../../components/ui/Card";
+import { useProfile, useSchedule } from "../../hooks/useStudentData";
 
 const DAYS = [
-  { id: 1, label: "Mon", date: "23" },
-  { id: 2, label: "Tue", date: "24" },
-  { id: 3, label: "Wed", date: "25" },
-  { id: 4, label: "Thu", date: "26" },
-  { id: 5, label: "Fri", date: "27" },
-  { id: 6, label: "Sat", date: "28" },
+  { id: "MONDAY", label: "Mon", date: "23" },
+  { id: "TUESDAY", label: "Tue", date: "24" },
+  { id: "WEDNESDAY", label: "Wed", date: "25" },
+  { id: "THURSDAY", label: "Thu", date: "26" },
+  { id: "FRIDAY", label: "Fri", date: "27" },
+  { id: "SATURDAY", label: "Sat", date: "28" },
 ];
 
-/**
- * Premium Schedule Screen
- * Refactored to use modular architecture.
- */
 export default function ScheduleScreen() {
-  const [selectedDay, setSelectedDay] = useState(1);
+  const [selectedDay, setSelectedDay] = useState("MONDAY");
+
+  const { data: profile, isLoading: isProfileLoading } = useProfile();
+  const classId = profile?.studentProfile?.enrollments?.[0]?.classId;
+  const { data: schedule = [], isLoading: isScheduleLoading } = useSchedule(classId);
+
+  if (isProfileLoading || isScheduleLoading) {
+    return (
+      <ScreenWrapper>
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color="#E66C19" />
+          <Text className="mt-4 text-on-surface">Loading your schedule...</Text>
+        </View>
+      </ScreenWrapper>
+    );
+  }
 
   return (
     <ScreenWrapper padding={false}>
@@ -26,7 +38,6 @@ export default function ScheduleScreen() {
         <Text className="text-2xl font-bold text-on-surface">My Schedule</Text>
       </View>
 
-      {/* --- Day Selector --- */}
       <View className="mt-6">
         <ScrollView 
           horizontal 
@@ -43,49 +54,33 @@ export default function ScheduleScreen() {
                   : 'bg-surface-dim border-outline'
               }`}
             >
-              <Text className={`text-[10px] font-bold uppercase ${selectedDay === day.id ? 'text-white/80' : 'text-on-surface-variant'}`}>
-                {day.label}
-              </Text>
-              <Text className={`text-lg font-bold mt-1 ${selectedDay === day.id ? 'text-white' : 'text-on-surface'}`}>
-                {day.date}
-              </Text>
-              {selectedDay === day.id && (
-                <View className="w-1 h-1 rounded-full bg-white mt-1" />
-              )}
+              <Text className={`text-[10px] font-bold uppercase ${selectedDay === day.id ? 'text-white/80' : 'text-on-surface-variant'}`}>{day.label}</Text>
+              <Text className={`text-lg font-bold mt-1 ${selectedDay === day.id ? 'text-white' : 'text-on-surface'}`}>{day.date}</Text>
+              {selectedDay === day.id && <View className="w-1 h-1 rounded-full bg-white mt-1" />}
             </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
 
-      {/* --- Timeline Content --- */}
-      <View className="flex-1 px-6 mt-8">
-        <TimelineItem 
-          time="09:00 AM"
-          title="Advanced Algorithms"
-          location="Room 402, Block B"
-          professor="Dr. Aris"
-          isOngoing
-        />
-        <TimelineItem 
-          time="11:30 AM"
-          title="Machine Learning Lab"
-          location="Tech Center Lab 2"
-          professor="Prof. Sarah"
-          isUpcoming
-        />
-        <TimelineItem 
-          time="02:00 PM"
-          title="Ethics in AI"
-          location="Seminar Hall A"
-          professor="Dr. James"
-        />
-        <TimelineItem 
-          time="04:30 PM"
-          title="Compiler Design"
-          location="Lecture Hall 3"
-          professor="Dr. Robert"
-        />
-      </View>
+      <ScrollView className="flex-1 px-6 mt-8">
+        {schedule.length > 0 ? (
+          schedule.map((item) => (
+            <TimelineItem 
+              key={item.id}
+              time={`${item.time} ${item.period}`}
+              title={item.title}
+              location={item.location}
+              professor={item.faculty}
+              isOngoing={item.isOngoing}
+              isUpcoming={item.isUpcoming}
+            />
+          ))
+        ) : (
+          <View className="items-center mt-20">
+            <Text className="text-on-surface-variant">No classes scheduled for today.</Text>
+          </View>
+        )}
+      </ScrollView>
     </ScreenWrapper>
   );
 }
@@ -99,11 +94,7 @@ function TimelineItem({ time, title, location, professor, isOngoing, isUpcoming 
           <View className={`w-3 h-3 rounded-full border-2 border-surface ${isOngoing ? 'bg-primary' : isUpcoming ? 'bg-primary/40' : 'bg-outline'}`} />
         </View>
       </View>
-      
-      <Card 
-        variant={isOngoing ? "primary" : "default"} 
-        className={`flex-1 p-4 ${isOngoing ? 'bg-primary/5' : ''}`}
-      >
+      <Card variant={isOngoing ? "primary" : "default"} className={`flex-1 p-4 ${isOngoing ? 'bg-primary/5' : ''}`}>
         <View className="flex-row justify-between items-start">
           <View className="flex-1">
             <Text className="text-base font-bold text-on-surface">{title}</Text>

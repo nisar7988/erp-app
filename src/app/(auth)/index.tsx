@@ -8,25 +8,25 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLoginForm } from "../../hooks/useLoginForm";
 import {
-  RoleTabBar,
   FormInput,
   GradientButton,
   CheckboxRow,
 } from "../../components/auth";
 import { useRouter } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "../../constants/Colors";
 
 /**
  * Login Screen — (auth)/index
  *
  * Production-ready login page for the Amber Atelier ERP.
- * Delegates all state management to `useLoginForm` hook.
- * Composed from reusable, themed auth components.
+ * Features a premium design with decorative backgrounds and themed components.
  */
 export default function LoginScreen() {
   const {
     form,
     setField,
-    setRole,
     isPasswordVisible,
     togglePasswordVisibility,
     toggleRememberMe,
@@ -35,39 +35,52 @@ export default function LoginScreen() {
     handleSubmit,
   } = useLoginForm();
   const router = useRouter();
+
   return (
     <SafeAreaView className="flex-1 bg-surface-dim">
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
+        {/* Decorative Background Elements */}
+        <View 
+          pointerEvents="none"
+          style={{ position: 'absolute', top: -100, right: -100, width: 300, height: 300, borderRadius: 150, backgroundColor: Colors.primaryContainer, opacity: 0.3 }} 
+        />
+        <View 
+          pointerEvents="none"
+          style={{ position: 'absolute', bottom: -50, left: -50, width: 200, height: 200, borderRadius: 100, backgroundColor: Colors.primary, opacity: 0.05 }} 
+        />
+
         <ScrollView
           className="flex-1"
           contentContainerStyle={{ flexGrow: 1 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View className="flex-1 px-6 pt-4 pb-8">
-            {/* ── Header ──────────────────────────────────────── */}
-            <View className="mb-8">
-              <Text className="mb-3 text-lg font-bold text-primary">
-                Amber Atelier
-              </Text>
-              <Text className="text-3xl font-bold leading-tight text-on-surface">
-                Academic Portal{"\n"}Access
-              </Text>
-              <Text className="mt-2 text-sm text-on-surface-variant">
-                Enter your credentials to manage your{"\n"}academic journey.
-              </Text>
+          <View className="flex-1 px-8 pt-12 pb-10">
+            {/* ── Logo & Header ────────────────────────────────── */}
+            <View className="mb-12">
+              <View className="mb-6 h-16 w-16 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/30">
+                <Ionicons name="school" size={32} color="white" />
+              </View>
+              
+              <View>
+                <Text className="text-sm font-extrabold uppercase tracking-[4px] text-primary">
+                  Amber Atelier
+                </Text>
+                <Text className="mt-2 text-4xl font-black leading-tight text-on-surface">
+                  Academic{"\n"}Portal
+                </Text>
+                <View className="mt-4 h-1 w-12 rounded-full bg-primary" />
+                <Text className="mt-4 text-base font-medium leading-relaxed text-on-surface-variant">
+                  Welcome back! Please enter your{"\n"}institutional credentials.
+                </Text>
+              </View>
             </View>
 
-            {/* ── Role Selector ────────────────────────────────── */}
-            {/* <View className="mb-8">
-              <RoleTabBar activeRole={form.role} onRoleChange={setRole} />
-            </View> */}
-
             {/* ── Form Fields ─────────────────────────────────── */}
-            <View className="gap-5">
+            <View className="gap-6">
               <FormInput
                 label="Institutional Email"
                 value={form.email}
@@ -75,7 +88,7 @@ export default function LoginScreen() {
                 placeholder="name@atelier.edu"
                 keyboardType="email-address"
                 autoCapitalize="none"
-                leadingIcon="@"
+                leadingIcon="mail-outline"
               />
 
               <FormInput
@@ -84,18 +97,18 @@ export default function LoginScreen() {
                 onChangeText={(text) => setField("password", text)}
                 placeholder="••••••••"
                 secureTextEntry={!isPasswordVisible}
-                leadingIcon="🔒"
-                trailingLabel="FORGOT PASSWORD?"
+                leadingIcon="lock-closed-outline"
+                trailingLabel="FORGOT?"
                 onTrailingPress={() => {
                   // TODO: Navigate to forgot password
                 }}
-                trailingIcon={isPasswordVisible ? "🙈" : "👁"}
+                trailingIcon={isPasswordVisible ? "eye-off-outline" : "eye-outline"}
                 onTrailingIconPress={togglePasswordVisibility}
               />
             </View>
 
             {/* ── Remember Me ─────────────────────────────────── */}
-            <View className="mt-6 mb-8">
+            <View className="mt-8 mb-10">
               <CheckboxRow
                 label="Keep me signed in on this device"
                 checked={form.rememberMe}
@@ -104,16 +117,22 @@ export default function LoginScreen() {
             </View>
 
             {/* ── Submit ──────────────────────────────────────── */}
-            <View className="mt-auto">
+            <View className="mt-auto pt-4">
               <GradientButton
                 label="Sign In"
-                // onPress={handleSubmit}
-                onPress={() => {
-                  router.navigate("/(tabs)");
-                }}
-                disabled={false}
+                onPress={handleSubmit}
+                disabled={!isFormValid}
                 loading={isSubmitting}
               />
+              
+              <View className="mt-8 flex-row items-center justify-center">
+                <Text className="text-sm text-on-surface-variant">
+                  Need assistance?{" "}
+                </Text>
+                <Text className="text-sm font-bold text-primary">
+                  Contact Support
+                </Text>
+              </View>
             </View>
           </View>
         </ScrollView>

@@ -20,16 +20,14 @@ export default function ProfileScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}
       >
-        {/* --- Navigation Header --- */}
         <View className="flex-row items-center justify-between mt-4">
           <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2">
             <Ionicons name="arrow-back" size={24} color="#1C1917" />
           </TouchableOpacity>
           <Text className="text-lg font-bold text-on-surface">Profile</Text>
-          <View className="w-10" /> {/* Spacer for centering */}
+          <View className="w-10" />
         </View>
 
-        {/* --- Profile Info --- */}
         <View className="items-center mt-8">
           <View className="relative">
             <Image
@@ -44,59 +42,28 @@ export default function ProfileScreen() {
           </View>
 
           <View className="items-center mt-6">
-            <Text className="text-2xl font-bold text-on-surface">
-              Alex Johnson
-            </Text>
-            <Text className="text-on-surface-variant font-medium mt-1">
-              ID: 882941
-            </Text>
-            <Text className="text-on-surface-variant mt-0.5">
-              Senior Product Designer
-            </Text>
+            <Text className="text-2xl font-bold text-on-surface">Alex Johnson</Text>
+            <Text className="text-on-surface-variant font-medium mt-1">ID: 882941</Text>
+            <Text className="text-on-surface-variant mt-0.5">Senior Product Designer</Text>
           </View>
         </View>
 
-        {/* --- Account Settings --- */}
         <View className="mt-10">
-          <Text className="text-[10px] font-bold text-on-surface-variant tracking-widest mb-4 uppercase">
-            Account Settings
-          </Text>
+          <Text className="text-[10px] font-bold text-on-surface-variant tracking-widest mb-4 uppercase">Account Settings</Text>
           <View className="bg-surface border border-outline rounded-[32px] overflow-hidden">
-            <MenuItem
-              icon="person-outline"
-              label="Personal Info"
-              onPress={() => {}}
-            />
-            <MenuItem
-              icon="notifications-outline"
-              label="Notifications"
-              onPress={() => {}}
-            />
-            <MenuItem
-              icon="shield-checkmark-outline"
-              label="Security"
-              onPress={() => {}}
-              isLast
-            />
+            <MenuItem icon="person-outline" label="Personal Info" onPress={() => {}} />
+            <MenuItem icon="notifications-outline" label="Notifications" onPress={() => {}} />
+            <MenuItem icon="shield-checkmark-outline" label="Security" onPress={() => {}} isLast />
           </View>
         </View>
 
-        {/* --- Preference & Support --- */}
         <View className="mt-8">
-          <Text className="text-[10px] font-bold text-on-surface-variant tracking-widest mb-4 uppercase">
-            Preference & Support
-          </Text>
+          <Text className="text-[10px] font-bold text-on-surface-variant tracking-widest mb-4 uppercase">Preference & Support</Text>
           <View className="bg-surface border border-outline rounded-[32px] overflow-hidden">
-            <MenuItem
-              icon="help-circle-outline"
-              label="Support Center"
-              onPress={() => {}}
-              isLast
-            />
+            <MenuItem icon="help-circle-outline" label="Support Center" onPress={() => {}} isLast />
           </View>
         </View>
 
-        {/* --- Logout Button --- */}
         <TouchableOpacity
           className="mt-10 flex-row items-center justify-center gap-2 bg-error/5 py-4 rounded-3xl border border-error/10"
           onPress={() => router.replace("/(auth)")}

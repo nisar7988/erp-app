@@ -1,5 +1,8 @@
 import { View, TextInput, Text, Pressable } from "react-native";
+import { useState } from "react";
 import type { KeyboardTypeOptions } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "../../constants/Colors";
 
 interface FormInputProps {
   label: string;
@@ -9,13 +12,13 @@ interface FormInputProps {
   keyboardType?: KeyboardTypeOptions;
   secureTextEntry?: boolean;
   autoCapitalize?: "none" | "sentences" | "words" | "characters";
-  /** Icon character rendered in the left slot */
-  leadingIcon?: string;
+  /** Icon name from Ionicons */
+  leadingIcon?: keyof typeof Ionicons.glyphMap;
   /** Optional right-side action (e.g. "FORGOT PASSWORD?") */
   trailingLabel?: string;
   onTrailingPress?: () => void;
   /** For password fields: toggles visibility */
-  trailingIcon?: string;
+  trailingIcon?: keyof typeof Ionicons.glyphMap;
   onTrailingIconPress?: () => void;
 }
 
@@ -37,6 +40,8 @@ export default function FormInput({
   trailingIcon,
   onTrailingIconPress,
 }: FormInputProps) {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
     <View className="gap-2">
       {/* Label row */}
@@ -54,11 +59,21 @@ export default function FormInput({
       </View>
 
       {/* Input container */}
-      <View className="flex-row items-center rounded-xl border border-outline bg-surface px-4 py-3.5">
+      <View
+        className={`flex-row items-center rounded-2xl border bg-surface px-4 py-3.5 ${
+          isFocused ? "border-primary bg-white" : "border-outline bg-surface"
+        }`}
+        style={{
+          borderWidth: 1.5,
+        }}
+      >
         {leadingIcon && (
-          <Text className="mr-3 text-base text-on-surface-variant">
-            {leadingIcon}
-          </Text>
+          <Ionicons
+            name={leadingIcon}
+            size={20}
+            color={isFocused ? Colors.primary : Colors.onSurfaceVariant}
+            className="mr-3"
+          />
         )}
         <TextInput
           value={value}
@@ -68,14 +83,19 @@ export default function FormInput({
           keyboardType={keyboardType}
           secureTextEntry={secureTextEntry}
           autoCapitalize={autoCapitalize}
-          className="flex-1 text-base text-on-surface"
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          className="flex-1 text-base font-medium text-on-surface"
           style={{ fontSize: 15, paddingVertical: 0 }}
         />
         {trailingIcon && (
           <Pressable onPress={onTrailingIconPress} hitSlop={12}>
-            <Text className="ml-3 text-base text-on-surface-variant">
-              {trailingIcon}
-            </Text>
+            <Ionicons
+              name={trailingIcon}
+              size={20}
+              color={Colors.onSurfaceVariant}
+              style={{ marginLeft: 12 }}
+            />
           </Pressable>
         )}
       </View>

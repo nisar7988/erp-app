@@ -1,5 +1,7 @@
 import { useState, useCallback } from "react";
 import type { LoginFormState, UserRole } from "../types/auth";
+import { authService } from "../services/authService";
+import { useRouter } from "expo-router";
 
 const INITIAL_STATE: LoginFormState = {
   email: "",
@@ -13,6 +15,7 @@ const INITIAL_STATE: LoginFormState = {
  * Keeps the screen component purely presentational.
  */
 export function useLoginForm() {
+  const router = useRouter();
   const [form, setForm] = useState<LoginFormState>(INITIAL_STATE);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -45,15 +48,14 @@ export function useLoginForm() {
 
     setIsSubmitting(true);
     try {
-      // TODO: Integrate with auth service
-      // await authService.login({ email: form.email, password: form.password, role: form.role });
-      console.log("Login submitted:", {
+      await authService.login({
         email: form.email,
-        role: form.role,
-        rememberMe: form.rememberMe,
+        password: form.password,
       });
-    } catch (error) {
-      console.error("Login failed:", error);
+      router.replace("/(tabs)");
+    } catch (error: any) {
+      console.error("Login failed:", error.response?.data?.message || error.message);
+      alert(error.response?.data?.message || "Login failed. Please check your credentials.");
     } finally {
       setIsSubmitting(false);
     }

@@ -1,4 +1,6 @@
 import { View, Text, Pressable } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "../../constants/Colors";
 
 interface CheckboxRowProps {
   label: string;
@@ -8,7 +10,7 @@ interface CheckboxRowProps {
 
 /**
  * Themed checkbox row with a label. Uses a simple bordered square with
- * a filled state for the checkmark.
+ * an Ionicons checkmark for the active state.
  */
 export default function CheckboxRow({
   label,
@@ -18,21 +20,26 @@ export default function CheckboxRow({
   return (
     <Pressable
       onPress={onToggle}
-      className="flex-row items-center gap-3"
-      hitSlop={8}
+      className="flex-row items-center gap-3.5"
+      hitSlop={12}
+      style={({ pressed }) => ({
+        opacity: pressed ? 0.7 : 1,
+      })}
     >
       <View
-        className={`h-5 w-5 items-center justify-center rounded border ${
+        className={`h-6 w-6 items-center justify-center rounded-lg border-2 transition-all ${
           checked
             ? "border-primary bg-primary"
             : "border-outline bg-surface"
         }`}
       >
         {checked && (
-          <Text className="text-xs font-bold text-white">✓</Text>
+          <Ionicons name="checkmark" size={16} color="white" />
         )}
       </View>
-      <Text className="text-sm text-on-surface-variant">{label}</Text>
+      <Text className="text-sm font-medium text-on-surface-variant">
+        {label}
+      </Text>
     </Pressable>
   );
 }

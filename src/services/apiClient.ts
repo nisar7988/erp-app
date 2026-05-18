@@ -1,0 +1,37 @@
+import axios from "axios";
+import safeStorage from "../utils/storage";
+
+const API_BASE_URL = "http://192.168.1.209:3000/api"; // Adjust if needed for Android Emulator (10.0.2.2)
+
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+apiClient.interceptors.request.use(
+  async (config) => {
+    const token = await safeStorage.getItem("access_token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401) {
+      // Handle unauthorized (e.g., redirect to login or refresh token)
+      console.warn("Unauthorized access, maybe token expired");
+    }
+    return Promise.reject(error);
+  },
+);
+
+export default apiClient;

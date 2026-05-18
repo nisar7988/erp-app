@@ -1,5 +1,7 @@
 import { Pressable, Text, ActivityIndicator, View } from "react-native";
 import { Colors } from "../../constants/Colors";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 
 interface GradientButtonProps {
   label: string;
@@ -10,7 +12,7 @@ interface GradientButtonProps {
 
 /**
  * Primary CTA button using the Amber Atelier brand orange.
- * Simulates a gradient feel using a layered approach with the primary palette.
+ * Uses LinearGradient for a premium, vibrant look.
  * Shows a loading spinner when submitting.
  */
 export default function GradientButton({
@@ -24,36 +26,32 @@ export default function GradientButton({
       onPress={onPress}
       disabled={disabled || loading}
       style={({ pressed }) => ({
-        opacity: disabled ? 0.5 : pressed ? 0.92 : 1,
-        transform: [{ scale: pressed ? 0.985 : 1 }],
+        opacity: disabled ? 0.6 : 1,
+        transform: [{ scale: pressed ? 0.98 : 1 }],
       })}
     >
-      <View
+      <LinearGradient
+        colors={
+          disabled
+            ? [Colors.outline, Colors.outline]
+            : [Colors.primary, Colors.primaryVariant]
+        }
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
         style={{
-          backgroundColor: disabled ? Colors.outline : Colors.primary,
-          borderRadius: 16,
-          paddingVertical: 16,
+          borderRadius: 20,
+          paddingVertical: 18,
           alignItems: "center",
           justifyContent: "center",
           flexDirection: "row",
-          gap: 8,
-          overflow: "hidden",
+          gap: 10,
+          shadowColor: Colors.primary,
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: disabled ? 0 : 0.3,
+          shadowRadius: 12,
+          elevation: disabled ? 0 : 6,
         }}
       >
-        {/* Faux gradient highlight on the right side */}
-        <View
-          style={{
-            position: "absolute",
-            right: 0,
-            top: 0,
-            bottom: 0,
-            width: "60%",
-            backgroundColor: disabled ? Colors.outline : Colors.primaryVariant,
-            opacity: 0.5,
-            borderTopLeftRadius: 60,
-            borderBottomLeftRadius: 60,
-          }}
-        />
         {loading ? (
           <ActivityIndicator color="#fff" size="small" />
         ) : (
@@ -61,24 +59,17 @@ export default function GradientButton({
             <Text
               style={{
                 color: "#fff",
-                fontSize: 16,
+                fontSize: 17,
                 fontWeight: "700",
+                letterSpacing: 0.5,
               }}
             >
               {label}
             </Text>
-            <Text
-              style={{
-                color: "#fff",
-                fontSize: 16,
-                fontWeight: "700",
-              }}
-            >
-              →
-            </Text>
+            <Ionicons name="arrow-forward" size={18} color="#fff" />
           </>
         )}
-      </View>
+      </LinearGradient>
     </Pressable>
   );
 }
