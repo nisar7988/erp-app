@@ -4,12 +4,36 @@ import { Ionicons } from "@expo/vector-icons";
 import { ScreenWrapper } from "../../components/layout/ScreenWrapper";
 import { Card } from "../../components/ui/Card";
 import { Badge } from "../../components/ui/Badge";
+import { useProfile, useFees } from "../../hooks/useStudentData";
+import GlobalLoaderOverlay from "../../components/common/GlobalLoaderOverlay";
 
 /**
  * Premium Fees Screen
- * Refactored to use modular architecture.
+ * Refactored to use modular architecture and dynamic API data.
  */
 export default function FeesScreen() {
+  const { data: profile, isLoading: isProfileLoading } = useProfile();
+  const studentId = profile?.studentProfile?.id;
+  const { data: fees = [], isLoading: isFeesLoading } = useFees(studentId);
+
+  const isLoading = isProfileLoading || isFeesLoading;
+
+  if (isLoading) {
+    return <GlobalLoaderOverlay text="Loading Fees..." />;
+  }
+
+  const totalOutstanding = fees.reduce((acc: number, fee: any) => acc + Number(fee.pendingAmount || 0), 0);
+  const totalPaid = fees.reduce((acc: number, fee: any) => acc + Number(fee.paidAmount || 0), 0);
+  
+  const pendingFees = fees.filter((f: any) => f.status !== 'PAID');
+  const nextDueDate = pendingFees.length > 0 
+    ? new Date(Math.min(...pendingFees.map((f: any) => new Date(f.dueDate).getTime()))).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    : 'N/A';
+
+  const transactions = fees.flatMap((fee: any) => fee.payments || [])
+    .sort((a: any, b: any) => new Date(b.paidAt).getTime() - new Date(a.paidAt).getTime())
+    .slice(0, 3);
+
   return (
     <ScreenWrapper>
       <View className="mt-4">
@@ -21,38 +45,40 @@ export default function FeesScreen() {
       {/* --- Financial Summary --- */}
       <Card
         variant="dim"
-        className="mt-8  p-6 rounded-[40px] shadow-xl shadow-black/20"
+        className="mt-8 p-6 rounded-[40px] shadow-xl shadow-black/20"
       >
         <View className="flex-row justify-between items-center">
-          <Text className=" font-bold uppercase tracking-widest text-[10px]">
+          <Text className="font-bold uppercase tracking-widest text-[10px]">
             Total Outstanding
           </Text>
           <Badge
-            label="FALL 2023"
+            label="CURRENT"
             variant="surface"
             className="bg-white/10 border-white/10"
           />
         </View>
-        <Text className=" text-4xl font-bold mt-2">$1,250.00</Text>
+        <Text className="text-4xl font-bold mt-2">${totalOutstanding.toFixed(2)}</Text>
 
         <View className="flex-row gap-4 mt-6">
           <View className="flex-1 bg-white/10 p-3 rounded-2xl">
             <Text className="text-white/50 text-[10px] font-bold uppercase">
               Paid
             </Text>
-            <Text className="text-lg font-bold">$4,500</Text>
+            <Text className="text-lg font-bold">${totalPaid.toFixed(2)}</Text>
           </View>
           <View className="flex-1 bg-primary p-3 rounded-2xl">
             <Text className="text-white text-[10px] font-bold uppercase">
               Due Date
             </Text>
-            <Text className="text-white text-lg font-bold">Oct 30</Text>
+            <Text className="text-white text-lg font-bold">{nextDueDate}</Text>
           </View>
         </View>
 
-        <TouchableOpacity className="bg-primary mt-6 py-4 rounded-2xl items-center shadow-lg shadow-white/10">
-          <Text className="text-white font-bold">Pay Now</Text>
-        </TouchableOpacity>
+        {totalOutstanding > 0 && (
+          <TouchableOpacity className="bg-primary mt-6 py-4 rounded-2xl items-center shadow-lg shadow-white/10">
+            <Text className="text-white font-bold">Pay Now</Text>
+          </TouchableOpacity>
+        )}
       </Card>
 
       {/* --- Fee Breakdown --- */}
@@ -61,37 +87,23 @@ export default function FeesScreen() {
           Fee Breakdown
         </Text>
         <View className="gap-3">
-          <FeeItem
-            title="Tuition Fee"
-            amount="$3,500.00"
-            status="Paid"
-            date="Aug 15, 2023"
-            isPaid
-          />
-          <FeeItem
-            title="Library Fee"
-            amount="$250.00"
-            status="Paid"
-            date="Aug 15, 2023"
-            isPaid
-          />
-          <FeeItem
-            title="Lab Maintenance"
-            amount="$750.00"
-            status="Pending"
-            date="Due Oct 30"
-          />
-          <FeeItem
-            title="Exam Registration"
-            amount="$500.00"
-            status="Pending"
-            date="Due Oct 30"
-          />
+          {fees.length > 0 ? fees.map((fee: any) => (
+            <FeeItem
+              key={fee.id}
+              title={fee.feeStructure?.title || "Fee"}
+              amount={`$${Number(fee.amount).toFixed(2)}`}
+              status={fee.status === "PAID" ? "Paid" : fee.status === "PARTIAL" ? "Partial" : "Pending"}
+              date={fee.status === 'PAID' ? "Paid" : `Due ${new Date(fee.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`}
+              isPaid={fee.status === 'PAID'}
+            />
+          )) : (
+            <Text className="text-on-surface-variant text-center mt-4">No fees found.</Text>
+          )}
         </View>
       </View>
 
       {/* --- Recent History --- */}
-      <View className="mt-10">
+      <View className="mt-10 mb-10">
         <Text className="text-[10px] font-bold text-on-surface-variant tracking-widest mb-4 uppercase">
           Recent Transactions
         </Text>
@@ -99,19 +111,20 @@ export default function FeesScreen() {
           variant="dim"
           className="bg-surface-dim border border-outline rounded-[32px] overflow-hidden"
         >
-          <TransactionItem
-            title="Tuition Installment 1"
-            date="Aug 15, 2023"
-            amount="-$2,000.00"
-            id="TXN-99210"
-          />
-          <TransactionItem
-            title="Library & Sports Fee"
-            date="Aug 10, 2023"
-            amount="-$500.00"
-            id="TXN-99185"
-            isLast
-          />
+          {transactions.length > 0 ? transactions.map((txn: any, index: number) => (
+            <TransactionItem
+              key={txn.id}
+              title={`Payment via ${txn.method || 'Card'}`}
+              date={new Date(txn.paidAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              amount={`-$${Number(txn.amount).toFixed(2)}`}
+              id={txn.referenceNo || txn.id.split('-')[0].toUpperCase()}
+              isLast={index === transactions.length - 1}
+            />
+          )) : (
+            <View className="p-6 items-center">
+              <Text className="text-on-surface-variant text-sm">No recent transactions.</Text>
+            </View>
+          )}
         </Card>
       </View>
     </ScreenWrapper>
