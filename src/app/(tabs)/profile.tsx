@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { ConfirmationModal } from "../../components/common/ConfirmationModal";
+import { authService } from "../../services/authService";
 
 /**
  * Premium Profile Screen
@@ -16,8 +17,9 @@ import { ConfirmationModal } from "../../components/common/ConfirmationModal";
 export default function ProfileScreen() {
   const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setLogoutModalVisible(false);
+    await authService.logout();
     router.replace("/(auth)");
   };
 

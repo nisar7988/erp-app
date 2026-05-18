@@ -1,5 +1,5 @@
 import axios from "axios";
-import safeStorage from "../utils/storage";
+import { useAuthStore } from "../store/authStore";
 
 const API_BASE_URL = "http://192.168.1.209:3000/api"; // Adjust if needed for Android Emulator (10.0.2.2)
 
@@ -11,8 +11,9 @@ const apiClient = axios.create({
 });
 
 apiClient.interceptors.request.use(
-  async (config) => {
-    const token = await safeStorage.getItem("access_token");
+  (config) => {
+    // Read token synchronously from Zustand store memory!
+    const token = useAuthStore.getState().accessToken;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

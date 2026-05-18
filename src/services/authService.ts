@@ -1,6 +1,7 @@
 import apiClient from "./apiClient";
 import safeStorage from "../utils/storage";
 import { LoginFormState } from "../types/auth";
+import { useAuthStore } from "../store/authStore";
 
 export const authService = {
   async login(credentials: Pick<LoginFormState, "email" | "password">) {
@@ -8,15 +9,14 @@ export const authService = {
     const response = await apiClient.post("/auth/login", credentials);
     const { access_token, user } = response.data.data; // Backend uses a standard response wrapper
 
-    await safeStorage.setItem("access_token", access_token);
-    await safeStorage.setItem("user", JSON.stringify(user));
+    // Update global Zustand store which automatically persists
+    useAuthStore.getState().login(user, access_token);
 
     return { access_token, user };
   },
 
   async logout() {
-    await safeStorage.removeItem("access_token");
-    await safeStorage.removeItem("user");
+    useAuthStore.getState().logout();
   },
 
   async getMe() {
@@ -25,7 +25,7 @@ export const authService = {
   },
 
   async getUser() {
-    const userStr = await safeStorage.getItem("user");
-    return userStr ? JSON.parse(userStr) : null;
+    // We can fetch from store if needed
+    return useAuthStore.getState().user;
   },
 };
