@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
+import { ConfirmationModal } from "../../components/common/ConfirmationModal";
 
 /**
  * Premium Profile Screen
@@ -13,6 +14,13 @@ import { router } from "expo-router";
  * - Themed Menu Items with Icons
  */
 export default function ProfileScreen() {
+  const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
+
+  const handleLogout = () => {
+    setLogoutModalVisible(false);
+    router.replace("/(auth)");
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-surface">
       <ScrollView
@@ -66,12 +74,24 @@ export default function ProfileScreen() {
 
         <TouchableOpacity
           className="mt-10 flex-row items-center justify-center gap-2 bg-error/5 py-4 rounded-3xl border border-error/10"
-          onPress={() => router.replace("/(auth)")}
+          onPress={() => setLogoutModalVisible(true)}
         >
           <Ionicons name="log-out-outline" size={20} color="#DC2626" />
           <Text className="text-error font-bold">Logout</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      <ConfirmationModal
+        visible={isLogoutModalVisible}
+        title="Log Out"
+        message="Are you sure you want to log out of your account? You will need to re-enter your credentials to access the portal."
+        confirmText="Log Out"
+        cancelText="Cancel"
+        type="danger"
+        icon="log-out-outline"
+        onConfirm={handleLogout}
+        onCancel={() => setLogoutModalVisible(false)}
+      />
     </SafeAreaView>
   );
 }
