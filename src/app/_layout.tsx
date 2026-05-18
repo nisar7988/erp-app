@@ -3,7 +3,16 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useAuthStore } from "../store/authStore";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 10, // 10 minutes
+      retry: 1, // Only retry once to fail faster
+      refetchOnWindowFocus: false, // Don't refetch on app focus in mobile unless explicitly needed
+    },
+  },
+});
 
 export default function RootLayout() {
   const { isAuthenticated, _hasHydrated } = useAuthStore();
