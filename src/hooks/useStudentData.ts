@@ -15,7 +15,7 @@ export const useAttendance = (userId?: string) => {
     queryKey: ['attendance', userId],
     queryFn: async () => {
       const response = await apiClient.get(`/attendance/student/${userId}`);
-      return response.data.data.map((record: any) => ({
+      return response.data.data.data.map((record: any) => ({
         id: record.id,
         title: record.class?.name || 'Class',
         status: record.status.charAt(0) + record.status.slice(1).toLowerCase(),

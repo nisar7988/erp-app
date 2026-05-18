@@ -1,15 +1,10 @@
 import React, { useState, useMemo } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ScreenWrapper } from "../../components/layout/ScreenWrapper";
 import { Card } from "../../components/ui/Card";
 import { useProfile, useSchedule } from "../../hooks/useStudentData";
+import GlobalLoaderOverlay from "../../components/common/GlobalLoaderOverlay";
 
 const DAYS = [
   { id: "MONDAY", label: "Mon", date: "23" },
@@ -29,14 +24,7 @@ export default function ScheduleScreen() {
     useSchedule(classId);
 
   if (isProfileLoading || isScheduleLoading) {
-    return (
-      <ScreenWrapper>
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#E66C19" />
-          <Text className="mt-4 text-on-surface">Loading your schedule...</Text>
-        </View>
-      </ScreenWrapper>
-    );
+    return <GlobalLoaderOverlay text="Loading Schedule..." />;
   }
 
   return (
@@ -113,7 +101,7 @@ function TimelineItem({
   isUpcoming,
 }: any) {
   return (
-    <View className="flex-row mb-6">
+    <View className="flex-row mb-6 h-32 shadow-sm ">
       <View className="items-center mr-4">
         <Text className="text-[10px] font-bold text-on-surface-variant uppercase w-16 text-right">
           {time}

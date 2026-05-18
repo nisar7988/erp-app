@@ -20,6 +20,7 @@ export default function HomeScreen() {
     isLoading,
     navigateToAttendance,
     navigateToCalendar,
+    navigateToFees,
   } = useDashboard();
 
   if (isLoading) {
@@ -82,7 +83,8 @@ export default function HomeScreen() {
         {/* Finances Card */}
         <Card
           variant="primary"
-          className="flex-1 justify-center items-center py-16"
+          className="flex-1 justify-center items-center py-16 "
+          onPress={navigateToFees}
         >
           {/* Decorative Glow */}
           <View className="absolute -top-10 -right-10 w-32 h-32 bg-primary/10 rounded-full" />

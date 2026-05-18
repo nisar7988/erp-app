@@ -12,9 +12,9 @@ export default function GlobalLoaderOverlay({
     <Animated.View
       entering={FadeIn.duration(200)}
       exiting={FadeOut.duration(200)}
-      className="absolute top-0 bottom-0 left-0 right-0 z-[999] justify-center items-center bg-black/40"
+      className="flex-1 justify-center items-center bg-surface z-[999]"
     >
-      <View className="bg-surface p-6 py-8 rounded-2xl items-center justify-center shadow-2xl min-w-[140px] max-w-[200px]">
+      <View className="items-center justify-center min-w-[140px]">
         <FlippingBookLoader />
         <Text className="text-on-surface font-medium mt-6 text-center text-sm">
           {text}
