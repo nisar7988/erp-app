@@ -6,7 +6,7 @@ import { Avatar } from "../../components/ui/Avatar";
 import { Card } from "../../components/ui/Card";
 import { ScheduleCard } from "../../components/dashboard/ScheduleCard";
 import { useDashboard } from "../../hooks/useDashboard";
-
+import GlobalLoaderOverlay from "@/components/common/GlobalLoaderOverlay";
 /**
  * Premium Student Dashboard
  * Refactored to use modular architecture.
@@ -23,15 +23,8 @@ export default function HomeScreen() {
   } = useDashboard();
 
   if (isLoading) {
-    return (
-      <ScreenWrapper>
-        <View className="flex-1 items-center justify-center">
-          <Text className="text-on-surface">Loading Dashboard...</Text>
-        </View>
-      </ScreenWrapper>
-    );
+    return <GlobalLoaderOverlay text="Loading Dashboard..." />;
   }
-
   return (
     <ScreenWrapper>
       {/* --- Header Section --- */}
