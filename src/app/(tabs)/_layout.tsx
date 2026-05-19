@@ -6,7 +6,6 @@ import FloatingComponent from "@/components/ai-box/FloatingComponent";
 export default function TabLayout() {
   return (
     <>
-      {" "}
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: Colors.primary,

@@ -114,7 +114,7 @@ export default function ClassAttendanceScreen() {
           <Ionicons name="arrow-back-outline" size={20} color="#1C1917" />
         </TouchableOpacity>
         <Text className="text-base font-bold text-on-surface">Class Attendance</Text>
-        <View className="w-10 h-10" /> {/* Spacer */}
+        <View className="w-10 h-10" />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} className="flex-1 pb-32">
