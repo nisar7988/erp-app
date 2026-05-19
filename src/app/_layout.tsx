@@ -27,7 +27,12 @@ export default function RootLayout() {
     if (!isAuthenticated && !inAuthGroup) {
       router.replace("/(auth)");
     } else if (isAuthenticated && inAuthGroup) {
-      router.replace("/(tabs)");
+      const user = useAuthStore.getState().user;
+      if (user?.role === "TEACHER") {
+        router.replace("/(teacher)");
+      } else {
+        router.replace("/(tabs)");
+      }
     }
   }, [isAuthenticated, _hasHydrated, segments]);
 
@@ -40,6 +45,7 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="(teacher)" />
       </Stack>
     </QueryClientProvider>
   );

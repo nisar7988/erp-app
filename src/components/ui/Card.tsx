@@ -8,7 +8,7 @@ interface CardProps extends TouchableOpacityProps {
 const variantStyles = {
   default: "bg-surface border-outline",
   dim: "bg-surface-dim border-outline",
-  primary: "bg-primary-container border-primary/10",
+  primary: "bg-primary border-primary/10",
   "surface-variant": "bg-surface-variant border-outline/50",
 };
 

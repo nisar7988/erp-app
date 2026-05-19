@@ -27,9 +27,6 @@ export function ConfirmationModal({
   type = "primary",
   icon,
 }: ConfirmationModalProps) {
-  const isDanger = type === "danger";
-  const isInfo = type === "info";
-
   let iconColor = Colors.primary;
   let iconBg = "bg-primary/10";
   let gradientColors = [Colors.primary, Colors.primaryVariant];

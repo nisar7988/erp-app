@@ -3,8 +3,9 @@ import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ScreenWrapper } from "../../components/layout/ScreenWrapper";
 import { Card } from "../../components/ui/Card";
-import { useProfile, useSchedule } from "../../hooks/useStudentData";
-import GlobalLoaderOverlay from "../../components/common/GlobalLoaderOverlay";
+import { useProfile } from "../../hooks/useStudentData";
+import { useTeacherSchedule } from "../../hooks/useTeacherData";
+import GlobalLoaderOverlay from "@/components/common/GlobalLoaderOverlay";
 
 const getDaysOfWeek = () => {
   const current = new Date();
@@ -64,7 +65,7 @@ const getScheduleStatus = (startTimeStr?: string, endTimeStr?: string, dayOfWeek
   return { isOngoing, isUpcoming };
 };
 
-export default function ScheduleScreen() {
+export default function TeacherScheduleScreen() {
   const DAYS = useMemo(() => getDaysOfWeek(), []);
   
   const currentDayIndex = new Date().getDay();
@@ -74,9 +75,8 @@ export default function ScheduleScreen() {
   const [selectedDay, setSelectedDay] = useState(defaultDay);
 
   const { data: profile, isLoading: isProfileLoading } = useProfile();
-  const classId = profile?.studentProfile?.enrollments?.[0]?.classId;
-  const { data: schedule = [], isLoading: isScheduleLoading } =
-    useSchedule(classId);
+  const teacherId = profile?.teacherProfile?.id;
+  const { data: schedule = [], isLoading: isScheduleLoading } = useTeacherSchedule(teacherId);
 
   const filteredSchedule = useMemo(() => {
     return schedule
@@ -98,7 +98,7 @@ export default function ScheduleScreen() {
   return (
     <ScreenWrapper padding={false}>
       <View className="px-6 mt-4">
-        <Text className="text-2xl font-bold text-on-surface">My Schedule</Text>
+        <Text className="text-2xl font-bold text-on-surface">Lecture Schedule</Text>
       </View>
 
       <View className="mt-6">
@@ -137,13 +137,13 @@ export default function ScheduleScreen() {
 
       <ScrollView className="flex-1 px-6 mt-8" showsVerticalScrollIndicator={false}>
         {filteredSchedule.length > 0 ? (
-          filteredSchedule.map((item) => (
+          filteredSchedule.map((item: any) => (
             <TimelineItem
               key={item.id}
               time={`${item.time} ${item.period}`}
               title={item.title}
-              location={item.location}
-              professor={item.faculty}
+              location={item.classRoom}
+              classNameText={item.className}
               isOngoing={item.isOngoing}
               isUpcoming={item.isUpcoming}
             />
@@ -151,7 +151,7 @@ export default function ScheduleScreen() {
         ) : (
           <View className="items-center mt-20">
             <Text className="text-on-surface-variant">
-              No classes scheduled for today.
+              No lectures scheduled for today.
             </Text>
           </View>
         )}
@@ -164,7 +164,7 @@ function TimelineItem({
   time,
   title,
   location,
-  professor,
+  classNameText,
   isOngoing,
   isUpcoming,
 }: any) {
@@ -188,15 +188,15 @@ function TimelineItem({
           <View className="flex-1">
             <Text className="text-base font-bold text-on-surface">{title}</Text>
             <View className="flex-row items-center gap-2 mt-2">
-              <Ionicons name="location-outline" size={14} color="#78716C" />
+              <Ionicons name="school-outline" size={14} color="#78716C" />
               <Text className="text-xs text-on-surface-variant">
-                {location}
+                Class: {classNameText}
               </Text>
             </View>
             <View className="flex-row items-center gap-2 mt-1">
-              <Ionicons name="person-outline" size={14} color="#78716C" />
+              <Ionicons name="location-outline" size={14} color="#78716C" />
               <Text className="text-xs text-on-surface-variant">
-                {professor}
+                Room: {location}
               </Text>
             </View>
           </View>

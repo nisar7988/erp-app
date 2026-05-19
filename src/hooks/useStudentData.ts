@@ -49,6 +49,9 @@ export const useSchedule = (classId?: string) => {
           faculty: item.teacher?.user?.firstName || 'Faculty',
           isOngoing: false, // Logic for ongoing can be added based on current time
           isUpcoming: false,
+          dayOfWeek: item.dayOfWeek,
+          startTime: item.startTime,
+          endTime: item.endTime,
         };
       }) as ScheduleItem[];
     },

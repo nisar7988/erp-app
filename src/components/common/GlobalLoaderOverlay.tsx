@@ -11,7 +11,6 @@ export default function GlobalLoaderOverlay({
   return (
     <Animated.View
       entering={FadeIn.duration(200)}
-      exiting={FadeOut.duration(200)}
       className="flex-1 justify-center items-center bg-surface z-[999]"
     >
       <View className="items-center justify-center min-w-[140px]">

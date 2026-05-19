@@ -48,14 +48,25 @@ export function useLoginForm() {
 
     setIsSubmitting(true);
     try {
-      await authService.login({
+      const { user } = await authService.login({
         email: form.email,
         password: form.password,
       });
-      router.replace("/(tabs)");
+      if (user?.role === "TEACHER") {
+        router.replace("/(teacher)");
+      } else {
+        router.replace("/(tabs)");
+      }
     } catch (error: any) {
-      console.error("Login failed:", error.response?.data?.message || error.message);
-      alert(error.response?.data?.message || "Login failed. Please check your credentials.");
+      console.error(
+        "Login failed:",
+        error.response?.data?.message || error.message,
+      );
+      alert(
+        error.response?.data?.message ||
+          error.message ||
+          "Login failed. Please check your credentials.",
+      );
     } finally {
       setIsSubmitting(false);
     }

@@ -8,6 +8,7 @@ const apiClient = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  timeout: 10000,
 });
 
 apiClient.interceptors.request.use(
@@ -31,6 +32,11 @@ apiClient.interceptors.response.use(
       // Handle unauthorized (e.g., redirect to login or refresh token)
       console.warn("Unauthorized access, maybe token expired");
     }
+    if (error.code == "ECONNABORTED") {
+      console.warn("Timeout exceeded, try again later");
+      return Promise.reject(error);
+    }
+
     return Promise.reject(error);
   },
 );

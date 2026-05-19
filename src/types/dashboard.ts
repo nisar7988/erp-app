@@ -7,6 +7,9 @@ export interface ScheduleItem {
   faculty: string;
   isOngoing?: boolean;
   isUpcoming?: boolean;
+  dayOfWeek?: string;
+  startTime?: string;
+  endTime?: string;
 }
 
 export interface FinanceSummary {

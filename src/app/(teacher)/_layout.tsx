@@ -3,17 +3,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../constants/Colors";
 import FloatingComponent from "@/components/ai-box/FloatingComponent";
 
-export default function TabLayout() {
+export default function TeacherLayout() {
   return (
     <>
-      {" "}
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: Colors.primary,
           tabBarInactiveTintColor: Colors.onSurfaceVariant,
           tabBarStyle: {
             position: "absolute",
-
             left: 16,
             right: 16,
             backgroundColor: Colors.surface,
@@ -28,7 +26,6 @@ export default function TabLayout() {
             shadowRadius: 16,
             // Elevation for Android
             elevation: 10,
-            // Ensure it's above other content
             borderTopColor: "transparent",
           },
           tabBarLabelStyle: {
@@ -53,12 +50,12 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="schedule"
+          name="classes"
           options={{
-            title: "Schedule",
+            title: "Classes",
             tabBarIcon: ({ color, focused }) => (
               <Ionicons
-                name={focused ? "calendar" : "calendar-outline"}
+                name={focused ? "school" : "school-outline"}
                 size={24}
                 color={color}
               />
@@ -66,12 +63,12 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="fees"
+          name="schedule"
           options={{
-            title: "Fees",
+            title: "Schedule",
             tabBarIcon: ({ color, focused }) => (
               <Ionicons
-                name={focused ? "wallet" : "wallet-outline"}
+                name={focused ? "calendar" : "calendar-outline"}
                 size={24}
                 color={color}
               />
