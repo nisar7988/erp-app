@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useAuthStore } from "../store/authStore";
 
-export const API_BASE_URL = "http://192.168.1.209:3000/api"; // Adjust if needed for Android Emulator (10.0.2.2)
+export const API_BASE_URL = "https://school-erp-backend-2av9.onrender.com/api"; // Adjust if needed for Android Emulator (10.0.2.2)
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
