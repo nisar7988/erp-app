@@ -23,7 +23,6 @@ export default function HomeScreen() {
     navigateToCalendar,
     navigateToFees,
   } = useDashboard();
-  console.log("schedule", schedule);
   if (isLoading) {
     return <GlobalLoaderOverlay text="Loading Dashboard..." />;
   }

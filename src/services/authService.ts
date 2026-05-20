@@ -5,7 +5,6 @@ import { useAuthStore } from "../store/authStore";
 
 export const authService = {
   async login(credentials: Pick<LoginFormState, "email" | "password">) {
-    console.log("credentials", credentials);
     const response = await apiClient.post("/auth/login", credentials);
     const { access_token, user } = response.data.data; // Backend uses a standard response wrapper
 

@@ -45,7 +45,6 @@ export default function TeacherHomeScreen() {
   const todaySchedule = schedule.filter(
     (item: any) => item.dayOfWeek === todayDayOfWeek,
   );
-  console.log("todaySchedule", todaySchedule);
 
   const teacherName = profile?.firstName || "Teacher";
   const avatarUrl =
