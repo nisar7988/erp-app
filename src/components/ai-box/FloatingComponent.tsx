@@ -95,8 +95,8 @@ const ChatWindow = ({ onClose }: { onClose: () => void }) => {
         } else {
           setMessages((prev) =>
             prev.map((msg) =>
-              msg.id === aiMessageId ? { ...msg, text: accumulatedText } : msg
-            )
+              msg.id === aiMessageId ? { ...msg, text: accumulatedText } : msg,
+            ),
           );
         }
       },
@@ -109,10 +109,13 @@ const ChatWindow = ({ onClose }: { onClose: () => void }) => {
         setIsTyping(false);
         activeRequestRef.current = null;
         // Don't show alert if user aborted it manually
-        if (error.message !== "Request aborted" && error.code !== "DOMException") {
+        if (
+          error.message !== "Request aborted" &&
+          error.code !== "DOMException"
+        ) {
           Alert.alert("Error", error?.message || "Failed to get a response");
         }
-      }
+      },
     );
 
     activeRequestRef.current = xhr;
@@ -121,7 +124,7 @@ const ChatWindow = ({ onClose }: { onClose: () => void }) => {
   return (
     <View
       style={{ height: 500 }}
-      className="absolute bottom-40 right-4 w-[80%] shadow-md rounded-2xl z-50 overflow-hidden border border-gray-200 bg-white"
+      className="absolute bottom-40 right-4 w-[80%] border-2 border-primary/30 shadow-md border-t-0 rounded-2xl z-50 overflow-hidden border border-gray-200 bg-white"
     >
       {/* Header */}
       <View className="bg-primary px-4 py-3 flex-row items-center justify-between">
@@ -168,7 +171,7 @@ const ChatWindow = ({ onClose }: { onClose: () => void }) => {
           value={input}
           onChangeText={setInput}
           placeholder="Type a message..."
-          className="flex-1 bg-gray-100 rounded-full px-4 py-2 mr-2"
+          className="flex-1 bg-gray-300 rounded-full px-4 py-4 mr-2"
           onSubmitEditing={handleSend}
           editable={!isLoading && !isTyping}
         />
