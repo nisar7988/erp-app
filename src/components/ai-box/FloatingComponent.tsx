@@ -5,12 +5,12 @@ import {
   TextInput,
   ScrollView,
   Alert,
-  ActivityIndicator,
 } from "react-native";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { aiService } from "@/services/aiServices";
-
+import { TypingAnimation } from "react-native-typing-animation";
+import { Colors } from "@/constants/Colors";
 const FloatingComponent = () => {
   const [showChatWindow, setShowChatWindow] = useState(false);
 
@@ -35,45 +35,87 @@ export default FloatingComponent;
 interface Message {
   id: string;
   text: string;
-  sender: 'user' | 'ai';
+  sender: "user" | "ai";
 }
 
 const ChatWindow = ({ onClose }: { onClose: () => void }) => {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([
-    { id: 'welcome', text: 'Hi! I am your AI Assistant. How can I help you today?', sender: 'ai' }
+    {
+      id: "welcome",
+      text: "Hi! I am your AI Assistant. How can I help you today?",
+      sender: "ai",
+    },
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
+  const activeRequestRef = useRef<XMLHttpRequest | null>(null);
 
-  const handleSend = async () => {
+  useEffect(() => {
+    return () => {
+      if (activeRequestRef.current) {
+        activeRequestRef.current.abort();
+      }
+    };
+  }, []);
+
+  const handleSend = () => {
     if (!input.trim()) return;
-    
+
     const userMessage: Message = {
       id: Date.now().toString(),
       text: input.trim(),
-      sender: 'user'
+      sender: "user",
     };
-    
+
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
-    
-    try {
-      const response = await aiService.askAI(userMessage.text);
-      if (response) {
-        setMessages((prev) => [
-          ...prev, 
-          { id: (Date.now() + 1).toString(), text: response, sender: 'ai' }
-        ]);
-      } else {
-         throw new Error("Empty response received");
-      }
-    } catch (error: any) {
-      Alert.alert("Error", error?.message || "Failed to get a response");
-    } finally {
-      setIsLoading(false);
+
+    if (activeRequestRef.current) {
+      activeRequestRef.current.abort();
     }
+
+    const aiMessageId = (Date.now() + 1).toString();
+    let hasCreatedMessage = false;
+
+    const xhr = aiService.streamAI(
+      userMessage.text,
+      (accumulatedText) => {
+        setIsLoading(false);
+        setIsTyping(true);
+
+        if (!hasCreatedMessage) {
+          hasCreatedMessage = true;
+          setMessages((prev) => [
+            ...prev,
+            { id: aiMessageId, text: accumulatedText, sender: "ai" },
+          ]);
+        } else {
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === aiMessageId ? { ...msg, text: accumulatedText } : msg
+            )
+          );
+        }
+      },
+      () => {
+        setIsTyping(false);
+        activeRequestRef.current = null;
+      },
+      (error) => {
+        setIsLoading(false);
+        setIsTyping(false);
+        activeRequestRef.current = null;
+        // Don't show alert if user aborted it manually
+        if (error.message !== "Request aborted" && error.code !== "DOMException") {
+          Alert.alert("Error", error?.message || "Failed to get a response");
+        }
+      }
+    );
+
+    activeRequestRef.current = xhr;
   };
 
   return (
@@ -90,25 +132,33 @@ const ChatWindow = ({ onClose }: { onClose: () => void }) => {
       </View>
 
       {/* Messages */}
-      <ScrollView 
+      <ScrollView
         ref={scrollViewRef}
         className="flex-1 px-4 py-3 bg-gray-50"
-        onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+        onContentSizeChange={() =>
+          scrollViewRef.current?.scrollToEnd({ animated: true })
+        }
       >
         {messages.map((msg) => (
-          <View 
-            key={msg.id} 
-            className={`px-3 py-2 rounded-xl mb-3 max-w-[80%] ${msg.sender === 'user' ? 'bg-blue-100 self-end' : 'bg-primary self-start'}`}
+          <View
+            key={msg.id}
+            className={`px-3 py-2 rounded-xl mb-3 max-w-[80%] ${msg.sender === "user" ? "bg-blue-100 self-end" : "bg-primary self-start"}`}
           >
-            <Text className={`${msg.sender === 'user' ? 'text-gray-800' : 'text-white'}`}>
+            <Text
+              className={`${msg.sender === "user" ? "text-gray-800" : "text-white"}`}
+            >
               {msg.text}
             </Text>
           </View>
         ))}
         {isLoading && (
-           <View className="bg-primary self-start px-3 py-2 rounded-xl mb-3 max-w-[80%]">
-             <ActivityIndicator size="small" color="#ffffff" />
-           </View>
+          <View className="flex-row items-center mt-2">
+            <TypingAnimation
+              dotColor={Colors.primary}
+              dotSpeed={0.15}
+              dotRadius={2}
+            />
+          </View>
         )}
       </ScrollView>
 
@@ -120,12 +170,12 @@ const ChatWindow = ({ onClose }: { onClose: () => void }) => {
           placeholder="Type a message..."
           className="flex-1 bg-gray-100 rounded-full px-4 py-2 mr-2"
           onSubmitEditing={handleSend}
-          editable={!isLoading}
+          editable={!isLoading && !isTyping}
         />
         <TouchableOpacity
           onPress={handleSend}
-          disabled={isLoading || !input.trim()}
-          className={`${(isLoading || !input.trim()) ? 'bg-gray-400' : 'bg-primary'} p-3 rounded-full`}
+          disabled={isLoading || isTyping || !input.trim()}
+          className={`${isLoading || isTyping || !input.trim() ? "bg-gray-400" : "bg-primary"} p-3 rounded-full`}
         >
           <Ionicons name="send" size={18} color="white" />
         </TouchableOpacity>

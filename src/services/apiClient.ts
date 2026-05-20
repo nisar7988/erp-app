@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useAuthStore } from "../store/authStore";
 
-const API_BASE_URL = "http://192.168.1.209:3000/api"; // Adjust if needed for Android Emulator (10.0.2.2)
+export const API_BASE_URL = "http://192.168.1.209:3000/api"; // Adjust if needed for Android Emulator (10.0.2.2)
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -29,8 +29,8 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      // Handle unauthorized (e.g., redirect to login or refresh token)
-      console.warn("Unauthorized access, maybe token expired");
+      //logout
+      useAuthStore.getState().logout();
     }
     if (error.code == "ECONNABORTED") {
       console.warn("Timeout exceeded, try again later");

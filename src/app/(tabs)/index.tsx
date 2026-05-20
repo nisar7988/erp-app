@@ -89,14 +89,14 @@ export default function HomeScreen() {
           {/* Decorative Glow */}
           <View className="absolute -top-10 -right-10 w-32 h-32 bg-primary/10 rounded-full" />
 
-          <Text className="text-[10px] font-bold text-on-surface-variant tracking-widest mb-4">
+          <Text className="text-[10px] font-bold text-white tracking-widest mb-4">
             FINANCES
           </Text>
           <View className="mb-4 items-center">
-            <Text className="text-3xl font-bold text-on-surface">
+            <Text className="text-3xl font-bold text-white">
               ${financeSummary.pendingAmount.toFixed(2)}
             </Text>
-            <Text className="text-[10px] font-bold text-on-surface-variant mt-1">
+            <Text className="text-[10px] font-bold text-white mt-1">
               Pending Fees
             </Text>
           </View>
