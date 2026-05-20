@@ -1,6 +1,6 @@
 /**
- * Amber Atelier Color Palette
- * 
+ * EduPortal Color Palette
+ *
  * This palette is used throughout the application for branding and consistency.
  * These values mirror the CSS variables in global.css.
  */

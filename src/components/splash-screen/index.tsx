@@ -1,11 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  Dimensions,
-} from "react-native";
+import { View, Text, StyleSheet, Animated, Dimensions } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 
@@ -15,7 +9,7 @@ const LETTER_DELAY = 120; // ms between each letter
 const START_DELAY = 600; // ms before typing begins
 const CURSOR_BLINK_RATE = 500;
 
-// Amber Atelier theme colors
+// EduPortal theme colors
 const THEME = {
   primary: "#E66C19",
   primaryVariant: "#FF8A3D",
@@ -178,9 +172,9 @@ export default function SplashScreen({ onFinish }: { onFinish: any }) {
           {showCursor && <View style={styles.cursor} />}
         </View>
 
-        {/* Subtitle — "Amber Atelier" */}
+        {/* Subtitle — "EduPortal" */}
         <Animated.Text style={[styles.subtitle, { opacity: subtitleOpacity }]}>
-          Amber Atelier
+          EduPortal
         </Animated.Text>
 
         {/* Shimmer line */}
@@ -207,8 +201,12 @@ export default function SplashScreen({ onFinish }: { onFinish: any }) {
 
         {/* Dots */}
         <Animated.View style={[styles.dotsRow, { opacity: taglineOpacity }]}>
-          <View style={[styles.dot, { backgroundColor: THEME.primaryContainer }]} />
-          <View style={[styles.dot, { backgroundColor: THEME.primaryVariant }]} />
+          <View
+            style={[styles.dot, { backgroundColor: THEME.primaryContainer }]}
+          />
+          <View
+            style={[styles.dot, { backgroundColor: THEME.primaryVariant }]}
+          />
           <View style={[styles.dot, { backgroundColor: THEME.primary }]} />
         </Animated.View>
       </View>

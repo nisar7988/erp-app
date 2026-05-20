@@ -22,16 +22,31 @@ export default function FeesScreen() {
     return <GlobalLoaderOverlay text="Loading Fees..." />;
   }
 
-  const totalOutstanding = fees.reduce((acc: number, fee: any) => acc + Number(fee.pendingAmount || 0), 0);
-  const totalPaid = fees.reduce((acc: number, fee: any) => acc + Number(fee.paidAmount || 0), 0);
-  
-  const pendingFees = fees.filter((f: any) => f.status !== 'PAID');
-  const nextDueDate = pendingFees.length > 0 
-    ? new Date(Math.min(...pendingFees.map((f: any) => new Date(f.dueDate).getTime()))).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-    : 'N/A';
+  const totalOutstanding = fees.reduce(
+    (acc: number, fee: any) => acc + Number(fee.pendingAmount || 0),
+    0,
+  );
+  const totalPaid = fees.reduce(
+    (acc: number, fee: any) => acc + Number(fee.paidAmount || 0),
+    0,
+  );
 
-  const transactions = fees.flatMap((fee: any) => fee.payments || [])
-    .sort((a: any, b: any) => new Date(b.paidAt).getTime() - new Date(a.paidAt).getTime())
+  const pendingFees = fees.filter((f: any) => f.status !== "PAID");
+  const nextDueDate =
+    pendingFees.length > 0
+      ? new Date(
+          Math.min(
+            ...pendingFees.map((f: any) => new Date(f.dueDate).getTime()),
+          ),
+        ).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+      : "N/A";
+
+  const transactions = fees
+    .flatMap((fee: any) => fee.payments || [])
+    .sort(
+      (a: any, b: any) =>
+        new Date(b.paidAt).getTime() - new Date(a.paidAt).getTime(),
+    )
     .slice(0, 3);
 
   return (
@@ -57,14 +72,14 @@ export default function FeesScreen() {
             className="bg-white/10 border-white/10"
           />
         </View>
-        <Text className="text-4xl font-bold mt-2">${totalOutstanding.toFixed(2)}</Text>
+        <Text className="text-4xl font-bold mt-2">Rs.{totalOutstanding}</Text>
 
         <View className="flex-row gap-4 mt-6">
-          <View className="flex-1 bg-white/10 p-3 rounded-2xl">
-            <Text className="text-white/50 text-[10px] font-bold uppercase">
+          <View className="flex-1 bg-outline/60 p-3 rounded-2xl">
+            <Text className="text-green-500 text-[7px] font-bold uppercase">
               Paid
             </Text>
-            <Text className="text-lg font-bold">${totalPaid.toFixed(2)}</Text>
+            <Text className="text-lg font-bold">Rs.{totalPaid}</Text>
           </View>
           <View className="flex-1 bg-primary p-3 rounded-2xl">
             <Text className="text-white text-[10px] font-bold uppercase">
@@ -87,17 +102,31 @@ export default function FeesScreen() {
           Fee Breakdown
         </Text>
         <View className="gap-3">
-          {fees.length > 0 ? fees.map((fee: any) => (
-            <FeeItem
-              key={fee.id}
-              title={fee.feeStructure?.title || "Fee"}
-              amount={`$${Number(fee.amount).toFixed(2)}`}
-              status={fee.status === "PAID" ? "Paid" : fee.status === "PARTIAL" ? "Partial" : "Pending"}
-              date={fee.status === 'PAID' ? "Paid" : `Due ${new Date(fee.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`}
-              isPaid={fee.status === 'PAID'}
-            />
-          )) : (
-            <Text className="text-on-surface-variant text-center mt-4">No fees found.</Text>
+          {fees.length > 0 ? (
+            fees.map((fee: any) => (
+              <FeeItem
+                key={fee.id}
+                title={fee.feeStructure?.title || "Fee"}
+                amount={`$${Number(fee.amount).toFixed(2)}`}
+                status={
+                  fee.status === "PAID"
+                    ? "Paid"
+                    : fee.status === "PARTIAL"
+                      ? "Partial"
+                      : "Pending"
+                }
+                date={
+                  fee.status === "PAID"
+                    ? "Paid"
+                    : `Due ${new Date(fee.dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
+                }
+                isPaid={fee.status === "PAID"}
+              />
+            ))
+          ) : (
+            <Text className="text-on-surface-variant text-center mt-4">
+              No fees found.
+            </Text>
           )}
         </View>
       </View>
@@ -111,18 +140,26 @@ export default function FeesScreen() {
           variant="dim"
           className="bg-surface-dim border border-outline rounded-[32px] overflow-hidden"
         >
-          {transactions.length > 0 ? transactions.map((txn: any, index: number) => (
-            <TransactionItem
-              key={txn.id}
-              title={`Payment via ${txn.method || 'Card'}`}
-              date={new Date(txn.paidAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-              amount={`-$${Number(txn.amount).toFixed(2)}`}
-              id={txn.referenceNo || txn.id.split('-')[0].toUpperCase()}
-              isLast={index === transactions.length - 1}
-            />
-          )) : (
+          {transactions.length > 0 ? (
+            transactions.map((txn: any, index: number) => (
+              <TransactionItem
+                key={txn.id}
+                title={`Payment via ${txn.method || "Card"}`}
+                date={new Date(txn.paidAt).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+                amount={`-$${Number(txn.amount).toFixed(2)}`}
+                id={txn.referenceNo || txn.id.split("-")[0].toUpperCase()}
+                isLast={index === transactions.length - 1}
+              />
+            ))
+          ) : (
             <View className="p-6 items-center">
-              <Text className="text-on-surface-variant text-sm">No recent transactions.</Text>
+              <Text className="text-on-surface-variant text-sm">
+                No recent transactions.
+              </Text>
             </View>
           )}
         </Card>

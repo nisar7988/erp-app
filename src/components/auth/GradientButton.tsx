@@ -11,7 +11,7 @@ interface GradientButtonProps {
 }
 
 /**
- * Primary CTA button using the Amber Atelier brand orange.
+ * Primary CTA button using the EduPortal brand orange.
  * Uses LinearGradient for a premium, vibrant look.
  * Shows a loading spinner when submitting.
  */

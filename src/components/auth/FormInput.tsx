@@ -24,7 +24,7 @@ interface FormInputProps {
 
 /**
  * Themed text input with label, leading icon, and optional trailing action.
- * Follows Material-style input patterns adapted for the Amber Atelier palette.
+ * Follows Material-style input patterns adapted for the EduPortal palette.
  */
 export default function FormInput({
   label,

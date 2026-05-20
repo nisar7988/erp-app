@@ -7,7 +7,8 @@ import { Card } from "../../components/ui/Card";
 import { ScheduleCard } from "../../components/dashboard/ScheduleCard";
 import { useDashboard } from "../../hooks/useDashboard";
 import GlobalLoaderOverlay from "@/components/common/GlobalLoaderOverlay";
-/**
+
+/**i
  * Premium Student Dashboard
  * Refactored to use modular architecture.
  */
@@ -22,10 +23,14 @@ export default function HomeScreen() {
     navigateToCalendar,
     navigateToFees,
   } = useDashboard();
-
+  console.log("schedule", schedule);
   if (isLoading) {
     return <GlobalLoaderOverlay text="Loading Dashboard..." />;
   }
+
+  const today = new Date()
+    .toLocaleDateString("en-US", { weekday: "long" })
+    .toUpperCase();
   return (
     <ScreenWrapper>
       {/* --- Header Section --- */}
@@ -94,7 +99,7 @@ export default function HomeScreen() {
           </Text>
           <View className="mb-4 items-center">
             <Text className="text-3xl font-bold text-white">
-              ${financeSummary.pendingAmount.toFixed(2)}
+              Rs. {financeSummary.pendingAmount}
             </Text>
             <Text className="text-[10px] font-bold text-white mt-1">
               Pending Fees
@@ -131,9 +136,18 @@ export default function HomeScreen() {
 
         {/* Schedule List */}
         <View className="gap-3">
-          {schedule.map((item) => (
-            <ScheduleCard key={item.id} item={item} />
-          ))}
+          {/* filter by today */}
+          {schedule
+            .filter((item: any) => item.dayOfWeek === today)
+            .sort((a: any, b: any) => {
+              return (
+                new Date(a.startTime).getTime() -
+                new Date(b.startTime).getTime()
+              );
+            })
+            .map((item: any) => (
+              <ScheduleCard key={item.id} item={item} />
+            ))}
         </View>
       </View>
     </ScreenWrapper>

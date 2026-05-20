@@ -7,11 +7,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLoginForm } from "../../hooks/useLoginForm";
-import {
-  FormInput,
-  GradientButton,
-  CheckboxRow,
-} from "../../components/auth";
+import { FormInput, GradientButton, CheckboxRow } from "../../components/auth";
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
@@ -20,7 +16,7 @@ import { Colors } from "../../constants/Colors";
 /**
  * Login Screen — (auth)/index
  *
- * Production-ready login page for the Amber Atelier ERP.
+ * Production-ready login page for the EduPortal ERP.
  * Features a premium design with decorative backgrounds and themed components.
  */
 export default function LoginScreen() {
@@ -43,13 +39,31 @@ export default function LoginScreen() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         {/* Decorative Background Elements */}
-        <View 
+        <View
           pointerEvents="none"
-          style={{ position: 'absolute', top: -100, right: -100, width: 300, height: 300, borderRadius: 150, backgroundColor: Colors.primaryContainer, opacity: 0.3 }} 
+          style={{
+            position: "absolute",
+            top: -100,
+            right: -100,
+            width: 300,
+            height: 300,
+            borderRadius: 150,
+            backgroundColor: Colors.primaryContainer,
+            opacity: 0.3,
+          }}
         />
-        <View 
+        <View
           pointerEvents="none"
-          style={{ position: 'absolute', bottom: -50, left: -50, width: 200, height: 200, borderRadius: 100, backgroundColor: Colors.primary, opacity: 0.05 }} 
+          style={{
+            position: "absolute",
+            bottom: -50,
+            left: -50,
+            width: 200,
+            height: 200,
+            borderRadius: 100,
+            backgroundColor: Colors.primary,
+            opacity: 0.05,
+          }}
         />
 
         <ScrollView
@@ -64,17 +78,18 @@ export default function LoginScreen() {
               <View className="mb-6 h-16 w-16 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/30">
                 <Ionicons name="school" size={32} color="white" />
               </View>
-              
+
               <View>
                 <Text className="text-sm font-extrabold uppercase tracking-[4px] text-primary">
-                  Amber Atelier
+                  EduPortal
                 </Text>
                 <Text className="mt-2 text-4xl font-black leading-tight text-on-surface">
                   Academic{"\n"}Portal
                 </Text>
                 <View className="mt-4 h-1 w-12 rounded-full bg-primary" />
                 <Text className="mt-4 text-base font-medium leading-relaxed text-on-surface-variant">
-                  Welcome back! Please enter your{"\n"}institutional credentials.
+                  Welcome back! Please enter your{"\n"}institutional
+                  credentials.
                 </Text>
               </View>
             </View>
@@ -102,7 +117,9 @@ export default function LoginScreen() {
                 onTrailingPress={() => {
                   // TODO: Navigate to forgot password
                 }}
-                trailingIcon={isPasswordVisible ? "eye-off-outline" : "eye-outline"}
+                trailingIcon={
+                  isPasswordVisible ? "eye-off-outline" : "eye-outline"
+                }
                 onTrailingIconPress={togglePasswordVisibility}
               />
             </View>
@@ -124,7 +141,7 @@ export default function LoginScreen() {
                 disabled={!isFormValid}
                 loading={isSubmitting}
               />
-              
+
               <View className="mt-8 flex-row items-center justify-center">
                 <Text className="text-sm text-on-surface-variant">
                   Need assistance?{" "}

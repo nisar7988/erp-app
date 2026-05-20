@@ -1,5 +1,5 @@
 /**
- * Amber Atelier Theme Tokens
+ * EduPortal Theme Tokens
  *
  * Centralized design tokens for spacing, typography, border radius, and shadows.
  * Use these constants alongside the color palette in Colors.ts to maintain
