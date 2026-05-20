@@ -1,6 +1,7 @@
 import React from "react";
-import { ScrollView, View, StatusBar } from "react-native";
+import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 
 interface ScreenWrapperProps {
   children: React.ReactNode;
@@ -21,7 +22,7 @@ export const ScreenWrapper = ({
   
   return (
     <SafeAreaView className="flex-1 bg-surface">
-      <StatusBar barStyle="dark-content" />
+      <StatusBar style="dark" />
       <Content 
         className={`flex-1 ${padding ? 'px-6' : ''} ${className}`}
         showsVerticalScrollIndicator={false}

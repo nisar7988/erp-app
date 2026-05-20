@@ -1,7 +1,13 @@
+import "../global.css";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAuthStore } from "../store/authStore";
+import * as ExpoSplashScreen from "expo-splash-screen";
+import SplashScreen from "../components/splash-screen";
+
+// Prevent the native splash screen from auto-hiding
+ExpoSplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,9 +24,17 @@ export default function RootLayout() {
   const { isAuthenticated, _hasHydrated } = useAuthStore();
   const segments = useSegments();
   const router = useRouter();
+  const [showSplash, setShowSplash] = useState(true);
+
+  // Hide the native splash screen once the app is ready
+  useEffect(() => {
+    if (_hasHydrated) {
+      ExpoSplashScreen.hideAsync();
+    }
+  }, [_hasHydrated]);
 
   useEffect(() => {
-    if (!_hasHydrated) return;
+    if (!_hasHydrated || showSplash) return;
 
     const inAuthGroup = segments[0] === "(auth)";
 
@@ -34,7 +48,16 @@ export default function RootLayout() {
         router.replace("/(tabs)");
       }
     }
-  }, [isAuthenticated, _hasHydrated, segments]);
+  }, [isAuthenticated, _hasHydrated, segments, showSplash]);
+
+  const handleSplashFinish = useCallback(() => {
+    setShowSplash(false);
+  }, []);
+
+  // Show the custom animated splash screen
+  if (showSplash) {
+    return <SplashScreen onFinish={handleSplashFinish} />;
+  }
 
   if (!_hasHydrated) {
     return null; // Wait for Zustand to load from AsyncStorage
@@ -42,7 +65,7 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Stack screenOptions={{ headerShown: false, statusBarStyle: "dark" }}>
+      <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="(teacher)" />

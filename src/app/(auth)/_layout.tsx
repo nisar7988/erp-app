@@ -5,7 +5,7 @@ export default function AuthLayout() {
     <Stack>
       <Stack.Screen
         name="index"
-        options={{ headerShown: false, statusBarStyle: "dark" }}
+        options={{ headerShown: false }}
       />
     </Stack>
   );
