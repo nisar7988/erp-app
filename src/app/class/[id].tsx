@@ -7,6 +7,7 @@ import { Avatar } from "../../components/ui/Avatar";
 import {
   useClassDetails,
   useSubmitBulkAttendance,
+  useClassAttendance,
 } from "../../hooks/useTeacherData";
 import GlobalLoaderOverlay from "@/components/common/GlobalLoaderOverlay";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -26,21 +27,35 @@ export default function ClassAttendanceScreen() {
     new Date().toISOString().split("T")[0],
   );
 
-  // When class details are loaded, default all students to PRESENT
+  const { data: attendanceRecords, isLoading: isLoadingAttendance } = useClassAttendance(id, attendanceDate);
+
+  // When class details or attendance records are loaded, populate the attendance map
   useEffect(() => {
     if (classDetails?.students) {
       const initialMap: Record<string, "PRESENT" | "ABSENT" | "LATE"> = {};
+      
+      // Default all students to PRESENT
       classDetails.students.forEach((enrollment: any) => {
         const sId = enrollment.student?.id;
         if (sId) {
           initialMap[sId] = "PRESENT";
         }
       });
+
+      // Override with existing database attendance records if they exist
+      if (attendanceRecords && attendanceRecords.length > 0) {
+        attendanceRecords.forEach((record: any) => {
+          if (record.studentId && record.status) {
+            initialMap[record.studentId] = record.status;
+          }
+        });
+      }
+
       setAttendanceMap(initialMap);
     }
-  }, [classDetails]);
+  }, [classDetails, attendanceRecords]);
 
-  if (isLoading) {
+  if (isLoading || isLoadingAttendance) {
     return <GlobalLoaderOverlay text="Loading Class Details..." />;
   }
 

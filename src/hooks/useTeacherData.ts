@@ -22,6 +22,19 @@ export const useClassDetails = (classId?: string) => {
   });
 };
 
+export const useClassAttendance = (classId?: string, date?: string) => {
+  return useQuery({
+    queryKey: ['classAttendance', classId, date],
+    queryFn: async () => {
+      const response = await apiClient.get('/attendance', {
+        params: { classId, date, limit: 1000 },
+      });
+      return response.data.data.data;
+    },
+    enabled: !!classId && !!date,
+  });
+};
+
 export const useTeacherSchedule = (teacherId?: string) => {
   return useQuery({
     queryKey: ['teacherSchedule', teacherId],
@@ -61,6 +74,7 @@ export const useSubmitBulkAttendance = () => {
     onSuccess: (_, variables) => {
       // Invalidate class details to refresh UI if needed
       queryClient.invalidateQueries({ queryKey: ['classDetails', variables.classId] });
+      queryClient.invalidateQueries({ queryKey: ['classAttendance', variables.classId, variables.date] });
     },
   });
 };
